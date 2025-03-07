@@ -3,6 +3,7 @@
 namespace Baum\Tests\Main\Standard;
 
 use Baum\Exceptions\MoveNotPossibleException;
+use Baum\Move;
 use Baum\Tests\Main\Concerns\NodeModelExtensionsTestTrait;
 use Baum\Tests\Main\Models\Category;
 use Baum\Tests\Main\Support\PopulateData;
@@ -709,5 +710,21 @@ class CategoryMovementTest extends UnitAbstract
         $this->assertEquals(0, $b->getDepth());
         $this->assertEquals(1, $c->getDepth());
         $this->assertEquals(2, $d->getDepth());
+    }
+
+    public function testMoveInvalidPosition()
+    {
+        $this->expectException(MoveNotPossibleException::class);
+        $a = Category::create(['name' => 'A']);
+        $b = Category::create(['name' => 'B']);
+        $b->makeChildOf($a);
+        Move::to($b, $a, 'up');
+    }
+
+    public function testMoveInvalidTarget()
+    {
+        $this->expectException(MoveNotPossibleException::class);
+        $a = Category::create(['name' => 'A']);
+        Move::to($a, null, 'up');
     }
 }
